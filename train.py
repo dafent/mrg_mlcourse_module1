@@ -6,8 +6,6 @@ import itertools
 from collections import Counter
 from sklearn.metrics import accuracy_score
 import argparse
-import csv
-from sys import exit
 
 
 parser = argparse.ArgumentParser()
@@ -70,7 +68,7 @@ class My_knn:
             pred_y_count = Counter(self.train_y[[item[1] for item in dist_kmin]])
             pred_y.append(pred_y_count.most_common(1)[0][0])
             # if count % 500 == 0:
-            print("count: {}, pred_y: {}".format(count, pred_y[count]))
+            #print("count: {}, pred_y: {}".format(count, pred_y[count]))
             count += 1
             
             
@@ -89,11 +87,8 @@ KNN = My_knn(5)
 
 KNN.fit(X_train, Y_train)
 
-Y_pred = KNN.predict(X_test[:10])
-print(classification_report(Y_test[:10], Y_pred))
+Y_pred = KNN.predict(X_test)
+print(classification_report(Y_test, Y_pred))
 
-#with open(args.model_output_dir, 'w') as f:
-#    f.write("{}".format(train_data))
-#    f.write('_')
-#    f.write("{}".format(train_label))
+
 

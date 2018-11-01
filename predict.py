@@ -21,14 +21,12 @@ def read_idx(filename):
         return np.fromstring(f.read(), dtype = np.uint8).reshape(shape)
 
 
-#raw_train = read_idx(args[x_train_dir])#"train-images.idx3-ubyte")
 with open(args.model_input_dir, 'r') as f:
     input_data = f.read().split('\n')
     train_data = np.array([[int(pixel) for pixel in image.split(',')] for image in input_data[:60000]]) #np.reshape(raw_train, (60000, 784))
     train_label = np.array([int(label) for label in input_data[60000:] if label != '']) #read_idx([args[y_train_dir])#"train-labels.idx1-ubyte")
 
-print(train_data.shape)
-print(train_label.shape)
+
 raw_test = read_idx(args.x_test_dir)
 test_data = np.reshape(raw_test, (10000, 784))
 test_label = read_idx(args.y_test_dir)
@@ -67,7 +65,7 @@ class My_knn:
             pred_y_count = Counter(self.train_y[[item[1] for item in dist_kmin]])
             pred_y.append(pred_y_count.most_common(1)[0][0])
             #if count % 100 == 0:
-            print("image number {} is done".format(count))
+            #print("image number {} is done".format(count))
             count += 1
             
         return pred_y
@@ -85,6 +83,6 @@ KNN = My_knn(5)
 
 KNN.fit(X, Y)
 
-Y_pred = KNN.predict(X_test[:10])
-print(classification_report(Y_true[:10], Y_pred[:10]))
+Y_pred = KNN.predict(X_test)
+print(classification_report(Y_true, Y_pred))
 
