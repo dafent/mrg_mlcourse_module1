@@ -6,6 +6,9 @@ import itertools
 from collections import Counter
 from sklearn.metrics import accuracy_score
 import argparse
+from zipfile import ZipFile
+import gzip, shutil
+from sys import exit
 
 
 parser = argparse.ArgumentParser()
@@ -15,16 +18,26 @@ parser.add_argument('-model_output_dir')
 args = parser.parse_args()
 
 
+def ungzip(filename):
+    new_filename = filename[:-3]
+    with gzip.open(filename, 'r') as f_in, open(new_filename, 'wb') as f_out:
+        shutil.copyfileobj(f_in, f_out)
+    return new_filename
+
 def read_idx(filename):
     with open (filename, 'rb') as f:
         zero, data_types, dims = st.unpack('>HBB', f.read(4))
         shape = tuple(st.unpack('>I', f.read(4))[0] for d in range(dims))
         return np.fromstring(f.read(), dtype=np.uint8).reshape(shape)
 
-
-raw_train = read_idx(args.x_train_dir)
+# images
+train_images_filename = ungzip(args.x_train_dir)
+raw_train = read_idx(train_images_filename)
 train_data = np.reshape(raw_train, (60000, 784))
-train_label = read_idx(args.y_train_dir)
+# labels
+train_labels_filename = ungzip(args.y_train_dir)
+train_label = read_idx(train_labels_filename)
+
 
 with open(args.model_output_dir, 'w') as f:
     for image in train_data:
